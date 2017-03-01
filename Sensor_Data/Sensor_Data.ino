@@ -24,6 +24,7 @@ int transmissionLength = 0;
 int SIGN_LENGTH = 2000; //Sign Length in ms (active transmission)
 int WAIT_TIME = 2000; //time between two signs in ms (no transmission)
 int DELAY = 200;
+int count = 0;
 /* Or, use Software SPI:
   G_SDO + XM_SDO -> tied together to the MISO pin!
   then select any pins for the SPI lines, and the two CS pins above
@@ -102,6 +103,7 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {  
+  count++;
   /* Get a new sensor event */ 
   sensors_event_t accel, mag, gyro, temp;
 
@@ -133,4 +135,10 @@ void loop(void)
   Serial.print("\n");
   transmissionLength = transmissionLength + DELAY;
   delay(DELAY);
+  
+  if(count >=220){
+    while(1){
+      
+    }
+  }
 }
