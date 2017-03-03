@@ -11,7 +11,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_LSM9DS0.h>
 
-SoftwareSerial BTserial(2, 3); // RX | TX
+SoftwareSerial BTserial(3, 4); // RX | TX
 // Connect the HC-05 TX to Arduino pin 2 RX. 
 // Connect the HC-05 RX to Arduino pin 3 TX through a voltage divider.
 
@@ -81,51 +81,54 @@ void configureSensor(void)
 /**************************************************************************/
 void setup() 
 {
+  Serial.begin(9600);
   BTserial.begin(9600); 
   delay(1000);
 //
-//  /* Initialise the sensor */
-//  if(!lsm.begin())
-//  {
-//    /* There was a problem detecting the LSM9DS0 ... check your connections */
-//    BTserial.println("Ooops, no LSM9DS0 detected ... Check your wiring or I2C ADDR!");
-//    while(1);
-//  }
+  /* Initialise the sensor */
+  if(!lsm.begin())
+  {
+    /* There was a problem detecting the LSM9DS0 ... check your connections */
+    BTserial.println("Ooops, no LSM9DS0 detected ... Check your wiring or I2C ADDR!");
+    while(1);
+  }
+  //Serial.println("Setup");
 //  /* Setup the sensor gain and integration time */
-//  configureSensor();
+  configureSensor();
   pinMode(LED_PIN, OUTPUT);
 
 }
  
 void loop()
 { 
-//    /* Get a new sensor event */ 
-//    sensors_event_t accel, mag, gyro, temp;
-//    lsm.getEvent(&accel, &mag, &gyro, &temp); 
+    /* Get a new sensor event */ 
+    sensors_event_t accel, mag, gyro, temp;
+    lsm.getEvent(&accel, &mag, &gyro, &temp); 
     
     
     if (transmissionLength > SIGN_LENGTH){
       digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-      BTserial.write("END@");
+      BTserial.write("END\n");
+      Serial.write("END\n");
       delay(WAIT_TIME);              
       transmissionLength = 0;
     }
     digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      String output = "0,0,0,0,0,0,";
-//    String output = "";
-//    output.concat(accel.acceleration.x);
-//    output.concat(",");
-//    output.concat(accel.acceleration.y);
-//    output.concat(",");
-//    output.concat(accel.acceleration.z);
-//    output.concat(",");
-//
-//    output.concat(gyro.gyro.x * 0.00875);
-//    output.concat(",");
-//    output.concat(gyro.gyro.y * 0.00875);
-//    output.concat(",");
-//    output.concat(gyro.gyro.z * 0.00875);
-//    output.concat(",");
+      //String output = "0,0,0,0,0,0,";
+    String output = "";
+    output.concat(accel.acceleration.x);
+    output.concat(",");
+    output.concat(accel.acceleration.y);
+    output.concat(",");
+    output.concat(accel.acceleration.z);
+    output.concat(",");
+
+    output.concat(gyro.gyro.x * 0.00875);
+    output.concat(",");
+    output.concat(gyro.gyro.y * 0.00875);
+    output.concat(",");
+    output.concat(gyro.gyro.z * 0.00875);
+    output.concat(",");
     
     for (int i = 0; i < sizeof(SENSOR_PINS)/sizeof(int); i = i + 1) {
       int sensorPin = SENSOR_PINS[i]; 
@@ -135,13 +138,15 @@ void loop()
       if(i <  sizeof(SENSOR_PINS)/sizeof(int) - 1)
         output.concat(",");
     }
-    output.concat("@");
+    output.concat("|0,0,0,0,0,0,0,0,0,0,0\n");
 
     int outputLength = output.length() + 1; 
     char buff[outputLength];
 
     output.toCharArray(buff, outputLength);
     BTserial.write(buff);
+    Serial.write(buff);
+    //Serial.println("test");
     transmissionLength = transmissionLength + DELAY;
     delay(DELAY);
 
