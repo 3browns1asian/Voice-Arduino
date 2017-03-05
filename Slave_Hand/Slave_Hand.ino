@@ -108,8 +108,8 @@ void loop()
     
     if (transmissionLength > SIGN_LENGTH){
       digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-      BTserial.write("END\n");
-      Serial.write("END\n");
+      BTserial.write("END\r\n");
+      Serial.write("END\r\n");
       delay(WAIT_TIME);              
       transmissionLength = 0;
     }
@@ -138,7 +138,7 @@ void loop()
       if(i <  sizeof(SENSOR_PINS)/sizeof(int) - 1)
         output.concat(",");
     }
-    output.concat("|0,0,0,0,0,0,0,0,0,0,0\n");
+    output.concat("|0,0,0,0,0,0,0,0,0,0,0\r\n");
 
     int outputLength = output.length() + 1; 
     char buff[outputLength];
