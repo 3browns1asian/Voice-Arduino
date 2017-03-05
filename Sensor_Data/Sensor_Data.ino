@@ -23,7 +23,7 @@ int LED_PIN = 13;
 int transmissionLength = 0;
 int SIGN_LENGTH = 2000; //Sign Length in ms (active transmission)
 int WAIT_TIME = 2000; //time between two signs in ms (no transmission)
-int DELAY = 200;
+int DELAY = 50;
 int count = 0;
 /* Or, use Software SPI:
   G_SDO + XM_SDO -> tied together to the MISO pin!
