@@ -36,7 +36,8 @@ int LED_PIN = 13;
 int transmissionLength = 0;
 int SIGN_LENGTH = 2000; //Sign Length in ms (active transmission)
 int WAIT_TIME = 2000; //time between two signs in ms (no transmission)
-int DELAY = 200;
+int DELAY = 0;
+int startTime = 0;
 /* Or, use Software SPI:
   G_SDO + XM_SDO -> tied together to the MISO pin!
   then select any pins for the SPI lines, and the two CS pins above
@@ -81,7 +82,7 @@ void configureSensor(void)
 /**************************************************************************/
 void setup() 
 {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   BTserial.begin(9600); 
   delay(1000);
 //
@@ -109,9 +110,10 @@ void loop()
     if (transmissionLength > SIGN_LENGTH){
       digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
       BTserial.write("END\r\n");
-      Serial.write("END\r\n");
+      //Serial.write("END\r\n");
       delay(WAIT_TIME);              
       transmissionLength = 0;
+      startTime = millis();
     }
     digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
       //String output = "0,0,0,0,0,0,";
@@ -145,9 +147,9 @@ void loop()
 
     output.toCharArray(buff, outputLength);
     BTserial.write(buff);
-    Serial.write(buff);
+    //Serial.write(buff);
     //Serial.println("test");
-    transmissionLength = transmissionLength + DELAY;
+    transmissionLength = transmissionLength + startTime - millis();
     delay(DELAY);
 
  
