@@ -136,7 +136,7 @@ void loop(void)
   transmissionLength = transmissionLength + DELAY;
   delay(DELAY);
   
-  if(count >=220){
+  if(count >= 41*20){
     while(1){
       
     }
