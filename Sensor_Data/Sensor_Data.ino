@@ -20,11 +20,12 @@ Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0(1000);  // Use I2C, ID #1000
 //Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0(LSM9DS0_XM_CS, LSM9DS0_GYRO_CS, 1000);
 int SENSOR_PINS[] = {A0,A1,A2,A3,A6};
 int LED_PIN = 13;
-int transmissionLength = 0;
+unsigned long transmissionLength = 0;
 int SIGN_LENGTH = 2000; //Sign Length in ms (active transmission)
 int WAIT_TIME = 2000; //time between two signs in ms (no transmission)
 int DELAY = 50;
 int count = 0;
+unsigned long startTime = 0;
 /* Or, use Software SPI:
   G_SDO + XM_SDO -> tied together to the MISO pin!
   then select any pins for the SPI lines, and the two CS pins above
@@ -93,6 +94,7 @@ void setup(void)
   pinMode(LED_PIN, OUTPUT);
   /* We're ready to go! */
   Serial.println("");
+  startTime = millis();
 }
 
 /**************************************************************************/
@@ -103,7 +105,7 @@ void setup(void)
 /**************************************************************************/
 void loop(void) 
 {  
-  count++;
+  //count++;
   /* Get a new sensor event */ 
   sensors_event_t accel, mag, gyro, temp;
 
@@ -115,30 +117,34 @@ void loop(void)
     Serial.println("END");
     delay(WAIT_TIME);              
     transmissionLength = 0;
+    startTime = millis();
+    count++;
   }
-  Serial.print(accel.acceleration.x); Serial.print(",");
-  Serial.print(accel.acceleration.y);Serial.print(",");
-  Serial.print(accel.acceleration.y);Serial.print(",");
-
-  Serial.print(gyro.gyro.x * 0.00875);Serial.print(",");
-  Serial.print(gyro.gyro.x * 0.00875);Serial.print(",");
-  Serial.print(gyro.gyro.x * 0.00875);Serial.print(",");
-
-
-  for (int i = 0; i < sizeof(SENSOR_PINS)/sizeof(int); i = i + 1) {
-    int sensorPin = SENSOR_PINS[i];
-    int sensorValue = analogRead(sensorPin);
-    Serial.print(sensorValue);
-    if(i <  sizeof(SENSOR_PINS)/sizeof(int) - 1)
-      Serial.print(",");
-  }
-  Serial.print("\n");
-  transmissionLength = transmissionLength + DELAY;
-  delay(DELAY);
   
-  if(count >= 41*20){
-    while(1){
-      
+  if(count >= 21){
+    while(1){ 
     }
   }
+    else{
+      Serial.print(accel.acceleration.x); Serial.print(",");
+      Serial.print(accel.acceleration.y);Serial.print(",");
+      Serial.print(accel.acceleration.z);Serial.print(",");
+    
+      Serial.print(gyro.gyro.x * 0.00875);Serial.print(",");
+      Serial.print(gyro.gyro.y * 0.00875);Serial.print(",");
+      Serial.print(gyro.gyro.z * 0.00875);Serial.print(",");
+    
+    
+      for (int i = 0; i < sizeof(SENSOR_PINS)/sizeof(int); i = i + 1) {
+        int sensorPin = SENSOR_PINS[i];
+        int sensorValue = analogRead(sensorPin);
+        Serial.print(sensorValue);
+        if(i <  sizeof(SENSOR_PINS)/sizeof(int) - 1)
+          Serial.print(",");
+      }
+      Serial.print("\r\n");
+      transmissionLength = millis() - startTime;
+      delay(DELAY);
+   }
 }
+
