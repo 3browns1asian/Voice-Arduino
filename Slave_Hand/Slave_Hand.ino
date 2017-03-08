@@ -33,7 +33,7 @@ Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0(1000);  // Use I2C, ID #1000
 //Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0(LSM9DS0_XM_CS, LSM9DS0_GYRO_CS, 1000);
 int SENSOR_PINS[] = {A0,A1,A2,A3,A6};
 int LED_PIN = 13;
-int transmissionLength = 0;
+unsigned long transmissionLength = 0;
 int SIGN_LENGTH = 2000; //Sign Length in ms (active transmission)
 int WAIT_TIME = 2000; //time between two signs in ms (no transmission)
 int DELAY = 0;
@@ -82,8 +82,8 @@ void configureSensor(void)
 /**************************************************************************/
 void setup() 
 {
-  Serial.begin(9600);
-  //BTserial.begin(9600); 
+//  Serial.begin(9600);
+  BTserial.begin(9600); 
   delay(1000);
 //
   /* Initialise the sensor */
@@ -109,8 +109,8 @@ void loop()
     
     if (transmissionLength > SIGN_LENGTH){
       digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-      //BTserial.write("END\r\n");
-      Serial.write("END\r\n");
+      BTserial.write("END\r\n");
+//      Serial.write("END\r\n");
       delay(WAIT_TIME);              
       transmissionLength = 0;
       startTime = millis();
@@ -140,17 +140,17 @@ void loop()
       if(i <  sizeof(SENSOR_PINS)/sizeof(int) - 1)
         output.concat(",");
     }
-//    output.concat("|0,0,0,0,0,0,0,0,0,0,0\r\n");
-    output.concat("\r\n");
+    output.concat("|0,0,0,0,0,0,0,0,0,0,0\r\n");
+//    output.concat("\r\n");
 
     int outputLength = output.length() + 1; 
     char buff[outputLength];
 
     output.toCharArray(buff, outputLength);
-    //BTserial.write(buff);
-    Serial.write(buff);
+    BTserial.write(buff);
+//    Serial.write(buff);
     //Serial.println("test");
-    transmissionLength = transmissionLength + startTime - millis();
+    transmissionLength = millis() - startTime;
     delay(DELAY);
 
  
