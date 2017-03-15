@@ -3,7 +3,7 @@
 
 import os
 dir = './'
-files = ['hello_akshay.txt', 'your_akshay.txt', 'have_akshay.txt']
+files = ['ko_akshay.txt', 'n_akshay.txt', 'ni_akshay.txt', 'chi_akshay.txt', 'wa_akshay.txt']
 
 new_strings = []
 for name in files:
